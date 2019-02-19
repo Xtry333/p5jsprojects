@@ -1,10 +1,13 @@
 class Body {
     constructor(position, velocity, friction) {
-        this.pos = createVector(position.x, position.y);
-        this.vel = createVector(velocity.x, velocity.y);
-        this.acc = createVector(0, 0);
-        this.friction = friction / 10;
+        this.pos = createVector(position.x, position.y); // Current position
+        this.pPos = createVector(this.pos.x, this.pos.y);          // Position in previous frame
+        this.vel = createVector(velocity.x, velocity.y); // Current velocity
+        this.acc = createVector(0, 0);                   // Current acceleration
+        this.friction = friction / 10;                   // Object friction
     }
+
+
 
     applyForce(force) {
         this.acc.add(force);
@@ -13,6 +16,8 @@ class Body {
     update() {
         this.vel.add(this.acc);
         this.vel.mult(1 - this.friction);
+        this.pPos.x = this.pos.x;
+        this.pPos.y = this.pos.y;
         this.pos.add(this.vel);
         this.acc.mult(0);
     }
@@ -23,18 +28,21 @@ class Particle extends Body {
         super(position, velocity, friction);
         this.lifespan = random(220, 255);
         this.color = color(255, 255, 255);
-        //this.sparkle = int(random(11));
+        this.sparkleTime = 10;
+        this.sparkle = int(random(this.sparkleTime));
     }
 
     isDead() {
-        return this.lifespan < 0;
+        return this.lifespan <= 0;
     }
 
     update() {
         super.update();
         if (this.lifespan > 0) {
-            //amt = 50.0 / (this.lifespan + 50.0) * random(10, 50);
-            this.lifespan -= 50.0 / (this.lifespan + 50.0) * random(10, 40);
+            let amt = 50.0 / (this.lifespan + 50.0);
+            this.lifespan -= amt  * random(10, 50);
+        } else {
+            this.lifespan = 0;
         }
     }
 
@@ -42,7 +50,7 @@ class Particle extends Body {
         this.color.setAlpha(this.lifespan);
         stroke(this.color);
         strokeWeight(4);
-        //if (this.sparkle >= 9) {
+        //if (this.sparkle >= this.sparkleTime) {
             point(this.pos.x, this.pos.y);
         //    this.sparkle = 0;
         //} else {
@@ -84,6 +92,10 @@ class Firework extends Body {
             rotate(this.vel.heading() + HALF_PI);
             line(0, 0 - 2, 0, 0 + 2);
             pop();
+
+            // TODO Trail
+            
+
         }
         for (let i = 0; i < this.particles.length; i++) {
             if (!this.particles[i].isDead()) {

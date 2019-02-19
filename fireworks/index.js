@@ -3,8 +3,8 @@ let particles = [];
 let gravity;
 
 function arrayRemove(arr, el) {
-    for(var i = arr.length - 1; i >= 0; i--) {
-        if(arr[i] === el) {
+    for (var i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] === el) {
             arr.splice(i, 1);
         }
     }
@@ -24,10 +24,15 @@ function setup() {
 
 function draw() {
     background(0, 50);
+    //background(0);
 
     for (let i = 0; i < firework.length; i++) {
         if (firework[i].pos.y > height) {
             firework[i] = new Firework(createVector(random(width), height), createVector(random(-2, 2), random(-20, -5)), 0.1);
+        }
+
+        if (dist(mouseX, mouseY, firework[i].pos.x, firework[i].pos.y) < 25) {
+            firework[i].explode();
         }
 
         firework[i].applyForce(gravity);
@@ -36,7 +41,7 @@ function draw() {
     }
 
     for (let i = particles.length - 1; i >= 0; i--) {
-        
+
         if (!particles[i].isDead()) {
             particles[i].applyForce(gravity);
             particles[i].update();
