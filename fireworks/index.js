@@ -1,7 +1,14 @@
 let firework = [];
 let particles = [];
 let gravity;
-let sparkles = 5;
+
+function arrayRemove(arr, el) {
+    for(var i = arr.length - 1; i >= 0; i--) {
+        if(arr[i] === el) {
+            arr.splice(i, 1);
+        }
+    }
+}
 
 function setup() {
     var cnv = createCanvas(windowWidth, windowHeight);
@@ -29,19 +36,22 @@ function draw() {
     }
 
     for (let i = particles.length - 1; i >= 0; i--) {
-        if (particles[i].pos.y > height) {
-            //particles = particles.filter();
+        
+        if (!particles[i].isDead()) {
+            particles[i].applyForce(gravity);
+            particles[i].update();
+            particles[i].display();
         }
-        particles[i].applyForce(gravity);
-        particles[i].update();
-        particles[i].display();
+        if (particles[i].pos.y > height || particles[i].isDead()) {
+            arrayRemove(particles, particles[i]);
+        }
     }
 
     if (mouseIsPressed) {
-        for (let i = 0; i < sparkles; i++) {
+        for (let i = 0; i < random(100) + 1; i++) {
             let pos = createVector(mouseX, mouseY);
-            let vel = p5.Vector.random2D().mult(random(8));
-            let particle = new Particle(pos, vel, random(0, 0.1));
+            let vel = p5.Vector.random2D().mult(random(5));
+            let particle = new Particle(pos, vel, random(0, 0.2));
             particle.color = color(random(190, 255), random(90, 255), 0);
             particles.push(particle);
         }
