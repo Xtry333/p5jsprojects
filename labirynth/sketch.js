@@ -1,5 +1,3 @@
-import Maze from './maze.js';
-import heapq from '../js/heapq.js'
 
 const test = Maze.empty(5, 5);
 console.log(test);
