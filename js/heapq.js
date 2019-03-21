@@ -120,5 +120,3 @@ function siftup(heap, idx, cmp) {
     heap[idx] = item;
     siftdown(heap, startIdx, idx, cmp);
 }
-
-export default heapq;

@@ -1,7 +1,3 @@
-
-const test = Maze.empty(5, 5);
-console.log(test);
-
 const comparer = (x, y) =>  x[0] < y[0];
 
 const hq = []
@@ -24,31 +20,27 @@ const WALL_SIZE = 20;
 
 const walls = [];
 
-class Labirynth {
-    constructor(width, height) {
-        this.maze = [];
-        for (let y = 0; y < height; y++) {
-            this.maze[y] = [];
-            for (let x = 0; x < width; x++) {
-                this.maze[y][x] = 1;
-            }
-        }
-    }
-}
+
+let lab = new Labirynth(30, 30)
 
 function setup() {
     var cnv = createCanvas(windowWidth, windowHeight);
     
     cnv.style('display', 'block');
     background(255);
-    walls.push({x: 40, y:50});
 }
 
 function draw() {
     background(255);
 
-    fill(0);
-    for (const wall of walls) {
-        rect(wall.x, wall.y, WALL_SIZE, WALL_SIZE);
+    fill(230);
+    for (let y = 0; y < lab.height; y++) {
+        for (let x = 0; x < lab.width; x++) {
+            if (lab.get(x, y).value == 0) {
+                rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
+                //fill(127);
+                //rect(5 + x * lab.wallSize+1, 5 + y * lab.wallSize+1, lab.wallSize-2, lab.wallSize-2);
+            }
+        }
     }
 }
