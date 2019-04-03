@@ -12,7 +12,7 @@
 const heapq = {}
 
 var cmplt = function (x, y) {
-    return x[0] < y[0];
+    return x.id < y.id;
 };
 
 // push an item into heap, O(log n)

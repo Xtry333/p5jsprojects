@@ -4,6 +4,7 @@ class Labirynth {
         this.height = height;
         this.data = Labirynth.empty(width, height);
         this.wallSize = 25;
+        this.pathTarget = null;
     };
 
     get(x, y) {
@@ -19,14 +20,14 @@ class Labirynth {
         if (x > 0) {
             adjacent.push(this.get(x - 1, y));
         }
-        if (y > 0) {
-            adjacent.push(this.get(x, y - 1));
-        }
         if (x < this.width - 1) {
             adjacent.push(this.get(x + 1, y));
         }
         if (y < this.height - 1) {
             adjacent.push(this.get(x, y + 1));
+        }
+        if (y > 0) {
+            adjacent.push(this.get(x, y - 1));
         }
         return adjacent.filter(x => x.value == 0);
     }
