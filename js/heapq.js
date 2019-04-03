@@ -12,6 +12,7 @@
 const heapq = {}
 
 var cmplt = function (x, y) {
+    //if (x.id == y.id) return Math.random() < .5
     return x.id < y.id;
 };
 
