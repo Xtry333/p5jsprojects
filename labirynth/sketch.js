@@ -27,10 +27,8 @@ function setup() {
 let start = lab.get(0, 0);
 let target = lab.get(20, 20);
 let current = start;
-const closedSet = [];
 const openSet = [];
 const visited = [];
-const nextSet = []
 heapq.push(openSet, {
     id: 0,
     node: start,
@@ -60,16 +58,10 @@ function drawGrid(lab) {
 let a = 1
 
 function draw() {
-    background(255);
-    drawGrid(lab);
 
-    fill(0)
-    if (current.node) {
-        line(current.node.x * lab.wallSize + lab.wallSize / 2 + 5, current.node.y * lab.wallSize + lab.wallSize / 2 + 5, mouseX, mouseY);
-        //text((UtilX.ndist([mouseX, mouseY], [target.x * lab.wallSize + lab.wallSize / 2 + 5, target.y * lab.wallSize + lab.wallSize / 2 + 5])/20).toFixed(), mouseX, mouseY)
-        text((dist(mouseX, mouseY, target.x * lab.wallSize + lab.wallSize / 2 + 5, target.y * lab.wallSize + lab.wallSize / 2 + 5)/20).toFixed(), mouseX, mouseY)
-    }
     if (a) {
+        background(255);
+        drawGrid(lab);
         //console.log(iterations++);
         current = heapq.pop(openSet);
         //while (previousCells.includes(current))
@@ -77,10 +69,10 @@ function draw() {
         visited.push(current.node);
         const prev = visited[visited.length - 2];
         fill(127);
-        if (prev) {
-            line(current.node.x * lab.wallSize + lab.wallSize / 2 + 5, current.node.y * lab.wallSize + lab.wallSize / 2 + 5,
-                prev.x * lab.wallSize + lab.wallSize / 2 + 5, prev.y * lab.wallSize + lab.wallSize / 2 + 5);
-        }
+        // if (prev) {
+        //     line(current.node.x * lab.wallSize + lab.wallSize / 2 + 5, current.node.y * lab.wallSize + lab.wallSize / 2 + 5,
+        //         prev.x * lab.wallSize + lab.wallSize / 2 + 5, prev.y * lab.wallSize + lab.wallSize / 2 + 5);
+        // }
 
 
         if (current.node.equals(target)) {
@@ -95,7 +87,7 @@ function draw() {
                 //console.log(adj);
                 //hq.push({id: current.moves + current.node.dist(target), node: adj, moves: current.moves + 1});
                 heapq.push(openSet, {
-                    id: 1.0 * current.moves + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
+                    id: 1 + current.moves + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
                     node: adj,
                     moves: current.moves + 1
                 });
