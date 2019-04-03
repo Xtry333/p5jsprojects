@@ -45,7 +45,7 @@ function drawGrid(lab) {
             } else {
                 fill(33);
             }
-            if (visited.includes(cell))
+            if (visited.some(c => c.node == cell))
                 fill(150, 200, 255);
             if (openSet.some(c => c.node == cell))
                 fill(255, 127, 0);
@@ -54,26 +54,59 @@ function drawGrid(lab) {
             rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
         }
     }
+    fill(100, 100, 155);
+    //constructPath(visited).forEach(e => {
+    //    rect(5 + e.node.x * lab.wallSize, 5 + e.node.y * lab.wallSize, lab.wallSize, lab.wallSize);
+    //})
+
+    // for (let i = 1; i < visited.length; i++) {
+    //     line(visited[i].node.x * lab.wallSize + lab.wallSize / 2 + 5, visited[i].node.y * lab.wallSize + lab.wallSize / 2 + 5,
+    //         visited[i].parent.node.x * lab.wallSize + lab.wallSize / 2 + 5, visited[i].parent.node.y * lab.wallSize + lab.wallSize / 2 + 5);
+    // }
+
+    let p = current
+    while(p.parent) {
+        line(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5,
+            p.parent.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.parent.node.y * lab.wallSize + lab.wallSize / 2 + 5);
+            p = p.parent
+    }
+
+    fill(0)
+    textAlign(CENTER, CENTER)
+    visited.forEach(e => {
+        text(e.moves, lab.wallSize/2 + 5 + e.node.x * lab.wallSize, lab.wallSize/2 + 5 + e.node.y * lab.wallSize)
+    })
 }
+
+const constructPath = (nodes) => {
+    const path = [current]
+    let p = current
+    while(p.parent) {
+        path.push(p)
+        line(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5,
+            p.parent.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.parent.node.y * lab.wallSize + lab.wallSize / 2 + 5);
+            p = p.parent
+    }
+    return path
+}
+
 let a = 1
 
 function draw() {
-
+    background(255);
+    drawGrid(lab);
     if (a) {
-        background(255);
-        drawGrid(lab);
         //console.log(iterations++);
         current = heapq.pop(openSet);
         //while (previousCells.includes(current))
         //    current = heapq.pop(hq)
-        visited.push(current.node);
+        visited.push(current);
         const prev = visited[visited.length - 2];
         fill(127);
-        // if (prev) {
+        if (prev) {
         //     line(current.node.x * lab.wallSize + lab.wallSize / 2 + 5, current.node.y * lab.wallSize + lab.wallSize / 2 + 5,
         //         prev.x * lab.wallSize + lab.wallSize / 2 + 5, prev.y * lab.wallSize + lab.wallSize / 2 + 5);
-        // }
-
+        }
 
         if (current.node.equals(target)) {
             console.log(visited);
@@ -83,13 +116,14 @@ function draw() {
             return current;
         }
         for (const adj of lab.getAdjacent(current.node)) {
-            if (!visited.includes(adj) && !openSet.some(x => x.node == adj)) {
+            if (!visited.some(x => x.node == adj) && !openSet.some(x => x.node == adj)) {
                 //console.log(adj);
                 //hq.push({id: current.moves + current.node.dist(target), node: adj, moves: current.moves + 1});
                 heapq.push(openSet, {
                     id: 1 + current.moves + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
                     node: adj,
-                    moves: current.moves + 1
+                    moves: current.moves + 1,
+                    parent: current
                 });
             }
         }
