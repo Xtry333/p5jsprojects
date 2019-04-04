@@ -11,24 +11,51 @@ class Labirynth {
         return this.data[y][x];
     }
 
-    getAdjacent(x, y) {
+    getAdjacent(x, y, allowDiagonals) {
         if (x._class === "Cell") {
-            return this.getAdjacent(x.x, x.y);
+            return this.getAdjacent(x.x, x.y, allowDiagonals);
         }
         const adjacent = [];
 
         if (x > 0) {
             adjacent.push(this.get(x - 1, y));
+            adjacent[adjacent.length - 1].diag = false
         }
         if (x < this.width - 1) {
             adjacent.push(this.get(x + 1, y));
+            adjacent[adjacent.length - 1].diag = false
         }
         if (y < this.height - 1) {
             adjacent.push(this.get(x, y + 1));
+            adjacent[adjacent.length - 1].diag = false
         }
         if (y > 0) {
             adjacent.push(this.get(x, y - 1));
+            adjacent[adjacent.length - 1].diag = false
         }
+        if (allowDiagonals) {
+            if (x > 0 && y > 0 && (this.get(x - 1, y).value == 0 || this.get(x, y - 1).value == 0)) {
+                let p = this.get(x - 1, y - 1)
+                p.diag = true
+                adjacent.push(p)
+            }
+            if (x < this.width - 1 && y < this.height - 1 && (this.get(x + 1, y).value == 0 || this.get(x, y + 1).value == 0)) {
+                let p = this.get(x + 1, y + 1)
+                p.diag = true
+                adjacent.push(p)
+            }
+            if (x > 0 && y < this.height - 1 && (this.get(x - 1, y).value == 0 || this.get(x, y + 1).value == 0)) {
+                let p = this.get(x - 1, y + 1)
+                p.diag = true
+                adjacent.push(p)
+            }
+            if (x < this.width - 1 && y > 0 && (this.get(x + 1, y).value == 0 || this.get(x, y - 1).value == 0)) {
+                let p = this.get(x + 1, y - 1)
+                p.diag = true
+                adjacent.push(p)
+            }
+        }
+
         return adjacent.filter(x => x.value == 0);
     }
 
@@ -59,7 +86,7 @@ class AStar {
             const current = heapq.pop(hq);
             previousCells.push(current);
             console.log(current);
-            fill(255,0,0);
+            fill(255, 0, 0);
             rect(5 + current[1].x * lab.wallSize, 5 + current[1].y * lab.wallSize, lab.wallSize, lab.wallSize);
 
             if (current[1].equals(target)) {
@@ -81,6 +108,8 @@ class Cell {
         this._x = x;
         this._y = y;
         this.value = 0;
+        this.wall = false
+        this.cost = 0;
     }
 
     get x() {
@@ -89,6 +118,10 @@ class Cell {
 
     get y() {
         return this._y;
+    }
+
+    isWall() {
+        return this.wall
     }
 
     equals(target) {
