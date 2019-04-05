@@ -19,39 +19,31 @@ class Labirynth {
 
         if (x > 0) {
             adjacent.push(this.get(x - 1, y));
-            adjacent[adjacent.length - 1].diag = false
         }
         if (x < this.width - 1) {
             adjacent.push(this.get(x + 1, y));
-            adjacent[adjacent.length - 1].diag = false
         }
         if (y < this.height - 1) {
             adjacent.push(this.get(x, y + 1));
-            adjacent[adjacent.length - 1].diag = false
         }
         if (y > 0) {
             adjacent.push(this.get(x, y - 1));
-            adjacent[adjacent.length - 1].diag = false
         }
         if (allowDiagonals) {
             if (x > 0 && y > 0 && (this.get(x - 1, y).value == 0 || this.get(x, y - 1).value == 0)) {
                 let p = this.get(x - 1, y - 1)
-                p.diag = true
                 adjacent.push(p)
             }
             if (x < this.width - 1 && y < this.height - 1 && (this.get(x + 1, y).value == 0 || this.get(x, y + 1).value == 0)) {
                 let p = this.get(x + 1, y + 1)
-                p.diag = true
                 adjacent.push(p)
             }
             if (x > 0 && y < this.height - 1 && (this.get(x - 1, y).value == 0 || this.get(x, y + 1).value == 0)) {
                 let p = this.get(x - 1, y + 1)
-                p.diag = true
                 adjacent.push(p)
             }
             if (x < this.width - 1 && y > 0 && (this.get(x + 1, y).value == 0 || this.get(x, y - 1).value == 0)) {
                 let p = this.get(x + 1, y - 1)
-                p.diag = true
                 adjacent.push(p)
             }
         }
