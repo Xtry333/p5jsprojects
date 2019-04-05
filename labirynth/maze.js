@@ -76,6 +76,7 @@ class AStar {
     static constructPath(current) {
         const path = [current]
         let p = current
+        if (!p) return []
         while (p.parent) {
             p = p.parent
             path.push(p)
@@ -83,15 +84,22 @@ class AStar {
         return path
     }
 
-    constructor() {
+    constructor(lab, start, target) {
+        this.lab = lab
+        this.start = start
+        this.target = target
         this.openSet = []
         this.visited = []
         this.current = null
     }
 
-    async pathfind(lab, start, target) {
+    async pathfind(skipWhen) {
+        const lab = this.lab
+        const start = this.start
+        const target = this.target
         const openSet = this.openSet
         const visited = this.visited
+        let skip = 0
         heapq.push(openSet, {
             id: 0,
             node: start,
@@ -136,7 +144,10 @@ class AStar {
                     heapq.push(openSet, nodeInfo);
                 }
             }
-            await UtilX.sleep(5)
+            if (skipWhen && skip++ >= skipWhen) {
+                skip = 0
+                await UtilX.sleep(5)
+            }
         }
         console.log("Cannot find target.");
         return [];

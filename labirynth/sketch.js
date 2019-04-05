@@ -19,7 +19,7 @@ for (let y = 0; y < lab.height; y++) {
     for (let x = 0; x < lab.width; x++) {
         //lab.get(x, y).cost = Math.random() * 10;
         lab.get(x, y).cost = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]);
-        lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width/2, lab.height/2]) < 3;
+        lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]) < 3;
     }
 }
 
@@ -32,23 +32,23 @@ function setup() {
     //frameRate(30);
 }
 
-let pathfinder = new AStar()
 let start = lab.get(0, 0)
 let target = lab.get(56, 36)
-pathfinder.pathfind(lab, start, target)
-let current = {
-    id: 0,
-    node: start,
-    cost: 0
-}
-const openSet = []
-const visited = []
-heapq.push(openSet, {
-    id: 0,
-    node: start,
-    cost: 0
-})
-let iterations = 0;
+let pathfinder = new AStar(lab, start, target)
+pathfinder.pathfind(10)
+// let current = {
+//     id: 0,
+//     node: start,
+//     cost: 0
+// }
+// const openSet = []
+// const visited = []
+// heapq.push(openSet, {
+//     id: 0,
+//     node: start,
+//     cost: 0
+// })
+// let iterations = 0;
 
 function drawGrid(lab) {
     for (let y = 0; y < lab.height; y++) {
@@ -65,7 +65,11 @@ function drawGrid(lab) {
                 fill(150, 200, 255);
             if (pathfinder.openSet.some(c => c.node.equals(cell))) // if it is still to be examined, open set
                 fill(255, 127, 0);
-            if (pathfinder.current && pathfinder.current.node == cell) // if it is the cell we are looking at
+            if (start == cell) // if it is starting node
+                fill(0, 255, 153);
+            if (target == cell) // if it is target node
+                fill(153, 0, 0);
+            if (pathfinder.current && pathfinder.current.node == cell) // if it is the current cell
                 fill(0, 127, 255);
             rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
         }
@@ -78,6 +82,7 @@ function drawGrid(lab) {
     //     text(e.cost.toFixed(), lab.wallSize / 2 + 5 + e.node.x * lab.wallSize, lab.wallSize / 2 + 5 + e.node.y * lab.wallSize)
     // })
 
+    if (pathfinder) {
     strokeWeight(3)
     stroke(0, 127, 255)
     noFill()
@@ -94,6 +99,7 @@ function drawGrid(lab) {
         }
         endShape()
     }
+}
     // let p = current
     // while (p.parent) {
     //     line(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5,
@@ -102,20 +108,6 @@ function drawGrid(lab) {
     // }
 
 }
-
-const constructPath = (current) => {
-    const path = [current]
-    let p = current
-    while (p.parent) {
-        p = p.parent
-        path.push(p)
-    }
-    return path
-}
-
-let a = 1
-let skip = 200
-
 
 function draw() {
     background(255);
