@@ -25,3 +25,8 @@ UtilX.mandist = (v1, v2) => {
     }
     return res
 }
+
+// Usage: await sleep(time) in async function
+UtilX.sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
