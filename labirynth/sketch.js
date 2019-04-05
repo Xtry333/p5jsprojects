@@ -65,12 +65,12 @@ function drawGrid(lab) {
                 fill(150, 200, 255);
             if (pathfinder.openSet.some(c => c.node.equals(cell))) // if it is still to be examined, open set
                 fill(255, 127, 0);
+            if (pathfinder.current && pathfinder.current.node == cell) // if it is the current cell
+                fill(0, 127, 255);
             if (start == cell) // if it is starting node
                 fill(0, 255, 153);
             if (target == cell) // if it is target node
                 fill(153, 0, 0);
-            if (pathfinder.current && pathfinder.current.node == cell) // if it is the current cell
-                fill(0, 127, 255);
             rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
         }
     }
@@ -83,23 +83,23 @@ function drawGrid(lab) {
     // })
 
     if (pathfinder) {
-    strokeWeight(3)
-    stroke(0, 127, 255)
-    noFill()
-    beginShape()
-    for (let p of AStar.constructPath(pathfinder.current))
-        vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
-    endShape()
-    strokeWeight(1)
-    for (let p of pathfinder.openSet) {
+        strokeWeight(3)
+        stroke(0, 127, 255)
+        noFill()
         beginShape()
-        while (p.parent) {
+        for (let p of AStar.constructPath(pathfinder.current))
             vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
-            p = p.parent
-        }
         endShape()
+        strokeWeight(1)
+        for (let p of pathfinder.openSet) {
+            beginShape()
+            while (p.parent) {
+                vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
+                p = p.parent
+            }
+            endShape()
+        }
     }
-}
     // let p = current
     // while (p.parent) {
     //     line(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5,
