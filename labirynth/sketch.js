@@ -1,25 +1,25 @@
 let lab = new Labirynth(57, 37);
-lab.get(1, 1).value = 1;
-lab.get(2, 2).value = 1;
-lab.get(3, 2).value = 1;
-lab.get(3, 0).value = 1;
-lab.get(3, 3).value = 1;
-lab.get(8, 1).value = 1;
-lab.get(8, 2).value = 1;
-lab.get(8, 3).value = 1;
-lab.get(7, 4).value = 1;
-lab.get(6, 5).value = 1;
-lab.get(5, 5).value = 1;
+// lab.get(1, 1).value = 1;
+// lab.get(2, 2).value = 1;
+// lab.get(3, 2).value = 1;
+// lab.get(3, 0).value = 1;
+// lab.get(3, 3).value = 1;
+// lab.get(8, 1).value = 1;
+// lab.get(8, 2).value = 1;
+// lab.get(8, 3).value = 1;
+// lab.get(7, 4).value = 1;
+// lab.get(6, 5).value = 1;
+// lab.get(5, 5).value = 1;
 
-for (let i = 0; i < 29; i++) {
-    lab.get(15, 29 - i).value = 1;
-}
+// for (let i = 0; i < 29; i++) {
+//     lab.get(15, 29 - i).value = 1;
+// }
 
 for (let y = 0; y < lab.height; y++) {
     for (let x = 0; x < lab.width; x++) {
         //lab.get(x, y).cost = Math.random() * 10;
-        lab.get(x, y).cost = Math.random() * UtilX.mandist([x, y], [lab.width/2, lab.height/2]);
-        lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width/2, lab.height/2]) < 5;
+        lab.get(x, y).cost = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]);
+        lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width/2, lab.height/2]) < 3;
     }
 }
 
@@ -87,6 +87,15 @@ function drawGrid(lab) {
     for (let p of constructPath(current))
         vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
     endShape()
+    strokeWeight(1)
+    for (let p of openSet) {
+        beginShape()
+        while (p.parent) {
+            vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
+            p = p.parent
+        }
+        endShape()
+    }
     // let p = current
     // while (p.parent) {
     //     line(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5,
@@ -107,7 +116,7 @@ const constructPath = (current) => {
 }
 
 let a = 1
-let skip = 10
+let skip = 200
 
 function draw() {
     background(255);

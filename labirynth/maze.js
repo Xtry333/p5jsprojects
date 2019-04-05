@@ -73,32 +73,67 @@ class Labirynth {
 }
 
 class AStar {
-    static pathfind(lab, start, target) {
-        if (target.value == 1) {
-            return "Target unreachable";
+    static constructPath(current) {
+        const path = [current]
+        let p = current
+        while (p.parent) {
+            p = p.parent
+            path.push(p)
         }
-        const hq = [];
-        const previousCells = [];
-        heapq.push(hq, [0, start, 0]);
-        let iterations = 0;
-        while (hq.length > 0 && iterations++ < 50) {
-            console.log(iterations);
-            const current = heapq.pop(hq);
-            previousCells.push(current);
-            console.log(current);
-            fill(255, 0, 0);
-            rect(5 + current[1].x * lab.wallSize, 5 + current[1].y * lab.wallSize, lab.wallSize, lab.wallSize);
+        return path
+    }
 
-            if (current[1].equals(target)) {
-                console.log(previousCells);
-                return current;
+    static pathfind(lab, start, target) {
+        const openSet = []
+        const visited = []
+        heapq.push(openSet, {
+            id: 0,
+            node: start,
+            cost: 0
+        })
+        //console.log(iterations++);
+        while (openSet.length > 0) {
+            current = heapq.pop(openSet)
+            //current = openSet.shift()
+            visited.push(current);
+
+            if (current.node.equals(target)) {
+                console.log("Found target.");
+                return AStar.constructPath(current);
             }
-            for (const adj of lab.getAdjacent(current[1])) {
-                if (!previousCells.includes(adj)) {
-                    heapq.push(hq, [current[2] + current[1].dist(target), adj, current[2] + 1]);
+
+            if (current.node.isWall()) {
+                console.log("Cannot find target.");
+                return [];
+            }
+
+            let adjacent = lab.getAdjacent(current.node, null, true)
+            for (const adj of adjacent) { // for each neighbor
+
+                if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/ ) {
+                    let moveCost = UtilX.ndist([current.node.x, current.node.y], [adj.x, adj.y])
+                    let nodeInfo = {
+                        id: current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
+                        node: adj,
+                        cost: current.cost + moveCost + adj.cost,
+                        parent: current
+                    }
+
+                    let other = openSet.find(x => x.node.equals(adj))
+                    if (other) {
+                        if (other.cost > nodeInfo.cost) {
+                            openSet.splice(openSet.indexOf(other), 1)
+                        } else {
+                            continue
+                        }
+                    }
+
+                    heapq.push(openSet, nodeInfo);
                 }
             }
         }
+        console.log("Cannot find target.");
+        return [];
     }
 }
 
