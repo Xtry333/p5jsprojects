@@ -83,9 +83,15 @@ class AStar {
         return path
     }
 
-    static pathfind(lab, start, target) {
-        const openSet = []
-        const visited = []
+    constructor() {
+        this.openSet = []
+        this.visited = []
+        this.current = null
+    }
+
+    async pathfind(lab, start, target) {
+        const openSet = this.openSet
+        const visited = this.visited
         heapq.push(openSet, {
             id: 0,
             node: start,
@@ -93,30 +99,29 @@ class AStar {
         })
         //console.log(iterations++);
         while (openSet.length > 0) {
-            current = heapq.pop(openSet)
-            //current = openSet.shift()
-            visited.push(current);
+            this.current = heapq.pop(openSet)
+            visited.push(this.current);
 
-            if (current.node.equals(target)) {
+            if (this.current.node.equals(target)) {
                 console.log("Found target.");
-                return AStar.constructPath(current);
+                return AStar.constructPath(this.current);
             }
 
-            if (current.node.isWall()) {
+            if (this.current.node.isWall()) {
                 console.log("Cannot find target.");
                 return [];
             }
 
-            let adjacent = lab.getAdjacent(current.node, null, true)
+            let adjacent = lab.getAdjacent(this.current.node, null, true)
             for (const adj of adjacent) { // for each neighbor
 
                 if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/ ) {
-                    let moveCost = UtilX.ndist([current.node.x, current.node.y], [adj.x, adj.y])
+                    let moveCost = UtilX.ndist([this.current.node.x, this.current.node.y], [adj.x, adj.y])
                     let nodeInfo = {
-                        id: current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
+                        id: this.current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
                         node: adj,
-                        cost: current.cost + moveCost + adj.cost,
-                        parent: current
+                        cost: this.current.cost + moveCost + adj.cost,
+                        parent: this.current
                     }
 
                     let other = openSet.find(x => x.node.equals(adj))
@@ -131,6 +136,7 @@ class AStar {
                     heapq.push(openSet, nodeInfo);
                 }
             }
+            await UtilX.sleep(5)
         }
         console.log("Cannot find target.");
         return [];

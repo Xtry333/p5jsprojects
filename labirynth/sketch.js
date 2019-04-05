@@ -32,8 +32,10 @@ function setup() {
     //frameRate(30);
 }
 
+let pathfinder = new AStar()
 let start = lab.get(0, 0)
 let target = lab.get(56, 36)
+pathfinder.pathfind(lab, start, target)
 let current = {
     id: 0,
     node: start,
@@ -52,24 +54,20 @@ function drawGrid(lab) {
     for (let y = 0; y < lab.height; y++) {
         for (let x = 0; x < lab.width; x++) {
             const cell = lab.get(x, y)
-            let drawn = 0
             strokeWeight(1)
             stroke(0)
             if (cell.value == 0) { // if cell just empty
                 fill(200 + map(cell.cost, 0, 10, 50, 0));
             } else { // if cell is a wall
                 fill(33);
-                //drawn = 1
-                //ellipse(x * lab.wallSize + lab.wallSize/2 + 5, y * lab.wallSize + lab.wallSize/2 + 5, lab.wallSize, lab.wallSize)
             }
-            // if (visited.some(c => c.node.equals(cell))) // if it has been visited
-            //     fill(150, 200, 255);
-            if (openSet.some(c => c.node.equals(cell))) // if it is still to be examined, open set
+            if (pathfinder.visited.some(c => c.node.equals(cell))) // if it has been visited
+                fill(150, 200, 255);
+            if (pathfinder.openSet.some(c => c.node.equals(cell))) // if it is still to be examined, open set
                 fill(255, 127, 0);
-            if (current.node == cell) // if it is the cell we are looking at
+            if (pathfinder.current && pathfinder.current.node == cell) // if it is the cell we are looking at
                 fill(0, 127, 255);
-            if (!drawn)
-                rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
+            rect(5 + x * lab.wallSize, 5 + y * lab.wallSize, lab.wallSize, lab.wallSize);
         }
     }
 
@@ -84,11 +82,11 @@ function drawGrid(lab) {
     stroke(0, 127, 255)
     noFill()
     beginShape()
-    for (let p of constructPath(current))
+    for (let p of AStar.constructPath(pathfinder.current))
         vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
     endShape()
     strokeWeight(1)
-    for (let p of openSet) {
+    for (let p of pathfinder.openSet) {
         beginShape()
         while (p.parent) {
             vertex(p.node.x * lab.wallSize + lab.wallSize / 2 + 5, p.node.y * lab.wallSize + lab.wallSize / 2 + 5)
@@ -118,52 +116,53 @@ const constructPath = (current) => {
 let a = 1
 let skip = 200
 
+
 function draw() {
     background(255);
     drawGrid(lab)
-    if (a)
-        for (let i = 0; i < skip; i++) {
-            //console.log(iterations++);
-            current = heapq.pop(openSet)
-            //current = openSet.shift()
-            visited.push(current);
+    // if (a)
+    //     for (let i = 0; i < skip; i++) {
+    //         //console.log(iterations++);
+    //         current = heapq.pop(openSet)
+    //         //current = openSet.shift()
+    //         visited.push(current);
 
-            if (current.node.equals(target)) {
-                console.log("Found target.");
-                a = 0
-                return current;
-            }
+    //         if (current.node.equals(target)) {
+    //             console.log("Found target.");
+    //             a = 0
+    //             return current;
+    //         }
 
-            if (current.node.isWall()) {
-                console.log("Cannot find target.");
-                a = 0
-                return current;
-            }
+    //         if (current.node.isWall()) {
+    //             console.log("Cannot find target.");
+    //             a = 0
+    //             return current;
+    //         }
 
-            let adjacent = lab.getAdjacent(current.node, null, false)
-            for (const adj of adjacent) { // for each neighbor
+    //         let adjacent = lab.getAdjacent(current.node, null, false)
+    //         for (const adj of adjacent) { // for each neighbor
 
-                if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/ ) {
-                    let moveCost = UtilX.ndist([current.node.x, current.node.y], [adj.x, adj.y])
-                    let nodeInfo = {
-                        id: current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
-                        node: adj,
-                        cost: current.cost + moveCost + adj.cost,
-                        parent: current
-                    }
+    //             if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/ ) {
+    //                 let moveCost = UtilX.ndist([current.node.x, current.node.y], [adj.x, adj.y])
+    //                 let nodeInfo = {
+    //                     id: current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
+    //                     node: adj,
+    //                     cost: current.cost + moveCost + adj.cost,
+    //                     parent: current
+    //                 }
 
-                    let other = openSet.find(x => x.node.equals(adj))
-                    if (other) {
-                        if (other.cost > nodeInfo.cost) {
-                            openSet.splice(openSet.indexOf(other), 1)
-                        } else {
-                            continue
-                        }
-                    }
+    //                 let other = openSet.find(x => x.node.equals(adj))
+    //                 if (other) {
+    //                     if (other.cost > nodeInfo.cost) {
+    //                         openSet.splice(openSet.indexOf(other), 1)
+    //                     } else {
+    //                         continue
+    //                     }
+    //                 }
 
-                    heapq.push(openSet, nodeInfo);
-                }
-            }
-            //a = 0
-        }
+    //                 heapq.push(openSet, nodeInfo);
+    //             }
+    //         }
+    //         //a = 0
+    //     }
 }
