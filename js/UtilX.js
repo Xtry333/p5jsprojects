@@ -30,3 +30,25 @@ UtilX.mandist = (v1, v2) => {
 UtilX.sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+UtilX.removeElement = (arr, el) => {
+    for (let i = 0; i < arr.length; i++) {
+        if (el == arr[i])
+            arr.splice(i, 1)
+    }
+}
+
+UtilX.removeIf = (arr, pred) => {
+    for (let i = 0; i < arr.length; i++) {
+        if (pred(arr[i]))
+            arr.splice(i, 1)
+    }
+}
+
+UtilX.random = (min, max) => {
+    if (max)
+    return Math.floor(Math.random() * (max - min + 1)) + min
+    if (!min)
+    return UtilX.random(0,1)
+    return Math.floor(Math.random() * min)
+}
