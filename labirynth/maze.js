@@ -2,7 +2,7 @@ class Labirynth {
     constructor(width, height) {
         this.width = width;
         this.height = height;
-        this.data = Labirynth.empty(width, height);
+        this.data = Labirynth.empty(width, height, 1);
         this.wallSize = 25;
         this.pathTarget = null;
     };
@@ -12,6 +12,7 @@ class Labirynth {
     }
 
     getAdjacent(x, y, allowDiagonals) {
+        if (!x) return []
         if (x._class === "Cell") {
             return this.getAdjacent(x.x, x.y, allowDiagonals);
         }
@@ -48,7 +49,29 @@ class Labirynth {
             }
         }
 
-        return adjacent.filter(x => x.value == 0);
+        return adjacent;
+    }
+
+    getNeighbors(x, y) {
+        if (!x) return []
+        if (x._class === "Cell") {
+            return this.getNeighbors(x.x, x.y);
+        }
+        const adjacent = [];
+
+        if (x > 1) {
+            adjacent.push(this.get(x - 2, y));
+        }
+        if (x < this.width - 2) {
+            adjacent.push(this.get(x + 2, y));
+        }
+        if (y < this.height - 2) {
+            adjacent.push(this.get(x, y + 2));
+        }
+        if (y > 1) {
+            adjacent.push(this.get(x, y - 2));
+        }
+        return adjacent;
     }
 
     static empty(width, height, val) {
@@ -57,12 +80,20 @@ class Labirynth {
         for (let y = 0; y < height; y++) {
             maze.push([]);
             for (let x = 0; x < width; x++) {
-                maze[y][x] = new Cell(x, y);
+                let c = new Cell(x, y)
+                c.value = val
+                maze[y][x] = c
             }
         }
         return maze;
     };
 }
+
+const Direction = {}
+Direction.Right = 1
+Direction.Down = 2
+Direction.Left = 4
+Direction.Up = 8
 
 class AStar {
     static constructPath(current) {
@@ -85,7 +116,7 @@ class AStar {
         this.current = null
     }
 
-    async pathfind(skipWhen) {
+    async pathfind(skipWhen, allowDiagonals) {
         const lab = this.lab
         const start = this.start
         const target = this.target
@@ -112,10 +143,10 @@ class AStar {
                 return [];
             }
 
-            let adjacent = lab.getAdjacent(this.current.node, null, true)
+            let adjacent = lab.getAdjacent(this.current.node, null, allowDiagonals).filter(x => x.value == 0)
             for (const adj of adjacent) { // for each neighbor
 
-                if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/ ) {
+                if (!visited.some(x => x.node.equals(adj)) /* && !openSet.some(x => x.node.equals(adj))*/) {
                     let moveCost = UtilX.ndist([this.current.node.x, this.current.node.y], [adj.x, adj.y])
                     let nodeInfo = {
                         id: this.current.cost + UtilX.ndist([adj.x, adj.y], [target.x, target.y]),
@@ -165,7 +196,7 @@ class Cell {
     }
 
     isWall() {
-        return this.wall
+        return this.value === 1
     }
 
     equals(target) {

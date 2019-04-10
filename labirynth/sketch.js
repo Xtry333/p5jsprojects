@@ -1,4 +1,4 @@
-let lab = new Labirynth(57, 37);
+let lab = new Labirynth(57, 37)
 // lab.get(1, 1).value = 1;
 // lab.get(2, 2).value = 1;
 // lab.get(3, 2).value = 1;
@@ -18,8 +18,8 @@ let lab = new Labirynth(57, 37);
 for (let y = 0; y < lab.height; y++) {
     for (let x = 0; x < lab.width; x++) {
         //lab.get(x, y).cost = Math.random() * 10;
-        lab.get(x, y).cost = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]);
-        lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]) < 3;
+        //lab.get(x, y).cost = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]);
+        //lab.get(x, y).value = Math.random() * UtilX.ndist([x, y], [lab.width / 2, lab.height / 2]) < 3;
     }
 }
 
@@ -33,22 +33,19 @@ function setup() {
 }
 
 let start = lab.get(0, 0)
-let target = lab.get(56, 36)
+let target = lab.get(15, 15)
 let pathfinder = new AStar(lab, start, target)
-pathfinder.pathfind(10)
-// let current = {
-//     id: 0,
-//     node: start,
-//     cost: 0
-// }
-// const openSet = []
-// const visited = []
-// heapq.push(openSet, {
-//     id: 0,
-//     node: start,
-//     cost: 0
-// })
-// let iterations = 0;
+
+const showTheWay = (v) => {
+    start = lab.get(UtilX.random(lab.width - 1), UtilX.random(lab.height - 1))
+    while (start.isWall())
+        start = lab.get(UtilX.random(lab.width - 1), UtilX.random(lab.height - 1))
+    target = lab.get(UtilX.random(lab.width - 1), UtilX.random(lab.height - 1))
+    while (target.isWall())
+        target = lab.get(UtilX.random(lab.width - 1), UtilX.random(lab.height - 1))
+    pathfinder = new AStar(lab, start, target)
+    pathfinder.pathfind(v)
+}
 
 function drawGrid(lab) {
     for (let y = 0; y < lab.height; y++) {
@@ -108,10 +105,43 @@ function drawGrid(lab) {
     // }
 
 }
+const queue = []
+let cell = lab.get(Math.floor(Math.random() * lab.width), Math.floor(Math.random() * lab.height))
+let prev = cell
+cell.value = 0
+queue.push(cell)
+
+const randomElement = (arr) => arr[Math.floor(Math.random() * arr.length)]
 
 function draw() {
-    background(255);
+    background(255)
     drawGrid(lab)
+
+    prev = cell
+    cell = randomElement(lab.getAdjacent(cell).filter(x => x.value == 1)) || randomElement(queue)
+    if (lab.getAdjacent(cell).filter(x => x.value == 0).length == 1) {
+        queue.push(cell)
+        cell.value = 0
+    } else {
+        cell = randomElement(queue)
+        //UtilX.removeElement(queue, cell)
+    }
+
+    UtilX.removeIf(queue, (c) => lab.getAdjacent(c).filter(x => x.value == 1).length == 0)
+    // let d = Math.floor(Math.random() * lab.getAdjacent(cell).length)
+
+    // cell = queue[Math.floor(Math.random() * queue.length)]
+
+    // if (lab.getAdjacent(cell).filter(c => c.value == 1).length > 2) {
+    //     let cells = lab.getAdjacent(cell).filter(c => c.value == 1)
+    //     d = Math.floor(Math.random() * cells.length)
+    //     cell = cells[d]
+    //     cell = cells[d]
+    //     cell.value = 0
+    //     queue.push(cell)
+    // }
+
+
     // if (a)
     //     for (let i = 0; i < skip; i++) {
     //         //console.log(iterations++);
