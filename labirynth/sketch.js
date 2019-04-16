@@ -113,9 +113,15 @@ queue.push(cell)
 
 const randomElement = (arr) => arr[Math.floor(Math.random() * arr.length)]
 
+let counter = 0
 function draw() {
     background(255)
     drawGrid(lab)
+
+    if (counter++ > 60) {
+        showTheWay(5)
+        counter = 0
+    }
 
     prev = cell
     cell = randomElement(lab.getAdjacent(cell).filter(x => x.value == 1)) || randomElement(queue)
