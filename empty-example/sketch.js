@@ -1,7 +1,7 @@
 function setup() {
-  // put setup code here
+    size(window.innerWidth, window.innerHeight);
 }
 
 function draw() {
-  // put drawing code here
+
 }
