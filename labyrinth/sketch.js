@@ -1,4 +1,4 @@
-let lab = new Labirynth(57, 37)
+let lab = new Labyrinth(57, 37)
 // lab.get(1, 1).value = 1;
 // lab.get(2, 2).value = 1;
 // lab.get(3, 2).value = 1;

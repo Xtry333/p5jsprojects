@@ -1,8 +1,8 @@
-class Labirynth {
+class Labyrinth {
     constructor(width, height) {
         this.width = width;
         this.height = height;
-        this.data = Labirynth.empty(width, height, 1);
+        this.data = Labyrinth.empty(width, height, 1);
         this.wallSize = 25;
         this.pathTarget = null;
     };
