@@ -19,7 +19,6 @@ function setup() {
 }
 
 function draw() {
-    //orbitControl();
     translate(-250, -250)
     background(0)
     for (let row of table.rows) {
