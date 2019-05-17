@@ -51,7 +51,7 @@ function draw() {
         }
     }
     beginShape()
-    stroke(135, 206, 250)
+    stroke(100, 149, 237)
     fill(135, 206, 255)
     strokeWeight(1)
     //vertex(segments[0].a.x, segments[0].a.y)
